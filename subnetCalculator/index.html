@@ -1,0 +1,114 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Algebra ip converter</title>
+  <meta name="description" content="#">
+  <meta name="Luka" content="ipcon">
+
+  <link rel="icon" href="favicon.png" type="image/x-icon"/>
+  <link rel="stylesheet" href="style.css"> 
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <div class=naslov>
+            <a href = "mainindex.html"><img src="algebra1.png"></a>
+            <h1 style="font-weight: bold;">IZ BINARNOG U IP</h1>
+        </div>
+    </header>
+    <div id=main>
+        <div id=glavni>
+                <div id=poruka>
+                    <h2 class=welcome></h2><h3 class=to>Upisite binarni zapis ip adrese</h3>
+                        <div id=forme>
+                            <form>
+                                <input class="inputone" type="text" placeholder="Prvi oktet" name="Prvi oktet" id="inputone">
+                                <br>
+                                <input class="inputtwo" type="text" placeholder="Drugi oktet" name="Drugi oktet" id="inputtwo">
+                                <br>
+                                <input class="inputthree" type="text" placeholder="Treci oktet" name="Treci oktet" id="inputthree">
+                                <br>
+                                <input class="inputfour" type="text" placeholder="Cetvrti oktet" name="Cetvrti oktet" id="inputfour">
+                                <br><br>
+                                <input type="submit" id="btnSubmit" onclick="return false">
+                                </form>
+                        </div>
+                    <h1 id="test2" class=howto></h1>
+                    <h3 id="test" class = well></h3>
+                    <button  style="display: none;" type = "button" id="test3" onclick="window.location.href='mainindex.html'">Back to main menu</button>
+
+                </div>    
+        </div>
+    </div>
+
+    <footer>
+        <div id=footer>
+            <p>Luka Ljubić</p>
+            <a href="https://www.algebra.hr/" target="_blank" >ALGEBRA</a>
+        </div>
+    </footer>
+
+    <script>
+
+        var elements = [document.getElementById("inputone"), document.getElementById("inputtwo"), document.getElementById("inputthree"), document.getElementById("inputfour")];
+ 
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].onkeypress = function(evt) {
+                evt = evt || window.event;
+                var charCode = evt.which || evt.keyCode;
+                return (charCode == 48 || charCode == 49) && evt.target.value.length < 8;
+            };
+        }
+
+        document.getElementById("btnSubmit").addEventListener("click", function(){
+            convert();
+        });
+       
+
+        function convert() {            
+
+
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].value.length != 8) {
+                    elements[i].focus();
+                    return;
+                }
+            }
+
+            var sums = [0, 0, 0, 0];
+   
+            for (var i = 0; i < sums.length; i++) {
+                sums[i] = calculateOktet(elements[i].value);
+            }
+
+            var ipaddress =sums[0] + "." +  sums[1] + "." +  sums[2] + "." +  sums[3];
+            document.getElementById("test2").innerHTML = "IP ADRESA:";
+            document.getElementById("test").innerHTML = ipaddress;
+            document.getElementById("test3").style.display="inline-block";
+        
+        }
+
+        function calculateOktet(value) {
+            var suma = 0;
+            var j = 7;
+            for (var i = 0; i < 8; i++) {
+                suma += (value[i]) * Math.pow(2, j);
+                j--;
+            }
+            return suma;
+        }
+
+
+        
+
+    </script>
+  <!-- <script src="scripts.js"></script> -->
+</body>
+</html>

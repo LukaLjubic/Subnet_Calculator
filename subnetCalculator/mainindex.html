@@ -1,0 +1,88 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Algebra ip converter</title>
+  <meta name="description" content="#">
+  <meta name="Luka" content="ipcon">
+
+  <link rel="icon" href="favicon.png" type="image/x-icon"/>
+  <link rel="stylesheet" type="text/css" href="sweetalert2.css">
+  <link rel="stylesheet" href="style.css"> 
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <div class=naslov>
+            <img src="algebra1.png">
+            <h1 style="font-weight: bold;">ALGEBRA ipV4 kalkulator</h1>
+        </div>
+    </header>
+    <div id=main>
+        <div id=glavni>
+                <div id=poruka>
+                    <h2 class=welcome>DOBRODOŠLI</h2><h3 class=to>Odaberite kalkulator</h3>
+                        <div id=forme>
+                            <button onclick="location.href='index.html';" id="button" class="button1">Binarni u ipv4</button>
+                            <button onclick="location.href='iptobinary.html';" id="button" class="button1">ipv4 u binarni</button>
+                            <button onclick="location.href='subnet.html';" id="button" class="button1">Subnet</button>
+                            <!-- <button id="ip" class="button1">Moja javna IP adresa</button> -->
+                            <!-- <form>
+                                <input class="inputone" type="text" placeholder="Prvi oktet" name="Prvi oktet" id="inputone">
+                                <br>
+                                <input class="inputtwo" type="text" placeholder="Drugi oktet" name="Drugi oktet" id="inputtwo">
+                                <br>
+                                <input class="inputthree" type="text" placeholder="Treci oktet" name="Treci oktet" id="inputthree">
+                                <br>
+                                <input class="inputfour" type="text" placeholder="Cetvrti oktet" name="Cetvrti oktet" id="inputfour">
+                                <br><br>
+                                <input type="submit" id="btnSubmit" onclick="return false">
+                                </form>
+                        </div> -->
+                    <h1 class=howto></h1>
+                    <h3 class = well></h3>
+                </div>    
+        </div>
+    </div>
+
+    <footer>
+        <div id=footer>
+            <p>Luka Ljubić</p>
+            <a href="https://www.algebra.hr/" target="_blank" >ALGEBRA</a>
+        </div>
+    </footer>
+  <script src="sweetalert2.all.js"></script>
+  <script>
+      document.getElementById("ip").addEventListener("click", showIP);
+      function showIP(){
+        const ipAPI = '//api.ipify.org?format=json'
+
+            Swal.queue([{
+            title: 'Your public IP',
+            confirmButtonText: 'Show my public IP',
+            text:
+                'Your public IP will be received ' +
+                'via AJAX request',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return fetch(ipAPI)
+                .then(response => response.json())
+                .then(data => Swal.insertQueueStep(data.ip))
+                .catch(() => {
+                    Swal.insertQueueStep({
+                    icon: 'error',
+                    title: 'Unable to get your public IP'
+                    })
+                })
+            }
+            }])
+                }
+  </script>
+</body>
+</html>

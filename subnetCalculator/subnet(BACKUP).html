@@ -1,0 +1,763 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Algebra ip converter</title>
+  <meta name="description" content="#">
+  <meta name="Luka" content="ipcon">
+
+  <link rel="stylesheet" href="subnetstyle.css"> 
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <div class=naslov>
+            <a href = "mainindex.html"><img src="algebra1.png"></a>
+            <h1 style="font-weight: bold;">SUBNET</h1>
+        </div>
+    </header>
+    <div id=main>
+        <div id=glavni>
+                <div id=poruka>
+                    <h2 class=welcome></h2><h3 class=to></h3>
+                        <div id=forma>
+                            <h2>Upisite ip adresu te prefix</h2>
+                            <form>
+                                <input class="inputjedan" class ="sveskupa" type="text" placeholder="Upiši" name="Prvi upis" id="inputjedan">
+                                <h1 class="tocka">.</h1>
+                                <br>
+                                <input class="inputdva" class ="sveskupa" type="text" placeholder="Upiši" name="Drugi upis" id="inputdva">
+                                <h1 class="tocka">.</h1>
+                                <br>
+                                <input class="inputtri" class ="sveskupa" type="text" placeholder="Upiši" name="Treci upis" id="inputtri">
+                                <h1 class="tocka">.</h1>
+                                <br>
+                                <input class="inputcetiri" class ="sveskupa" type="text" placeholder="Upiši" name="Cetvrti upis" id="inputcetiri">
+                                <h1 class="slash"> / </h1>
+                                <input class="inputslash" class ="sveskupa" type="text" placeholder="Mask" name="Cetvrti upis" id="inputslash">
+                                <input type="submit" id="btnSubmit2" onclick="return false">
+
+                                <br><br>
+                                
+                        </div>
+                        <div id="odgovori">
+                            <h3 style="display: none;" id="gmreza"></h3>
+                            <h3 style="display: none;" id="gprvakorisna"></h3>
+                            <h3 style="display: none;" id="gbrodcast"></h3>
+                            <h3 style="display: none;" id="gzadnjakorisna"></h3>
+                        </div>
+                        <div class="forma2">
+                             <h2>Upišite klasu i broj potrebnih uređaja</h2>
+                             <select id = "klase" size="1">
+                                <option  value="A">A KLASA</option>
+                                <option value="B">B KLASA</option>
+                                <option value="C">C KLASA</option>
+                              </select>
+                             <input class="inputpet" type="text" placeholder="Upiši broj uređaja" name="Peti upis" id="inputpet">
+                             <input type="submit" id="btnSubmit" onclick="return false">
+                                
+                        </div>
+                    <h1 id ="vasOdgovor" class=howto>Kako se koristi?</h1>
+                    <h3 id="mreza" class = well>Vrlo jednostavno. Prva funkcionalnost omogućava pronalaženje mreže, prve korisne adrese, broadcast adrese i zadnje korisne adrese. Samo je potrebno upisati ip adresu i prefix. Druga funkcionalnost omogućava pronalaženje istih parametara ali iz zadanog broja uređaja.
+                    </h3>
+                    <h3 id="prva" style="display: none;" class = well><!--MJENJAM U JS-U--></h3>
+                    <h3 id="brod" style="display: none;" class = well><!--MJENJAM U JS-U--></h3>
+                    <h3 id="zad" style="display: none;" class = well><!--MJENJAM U JS-U--></h3>
+                </div>    
+        </div>
+    </div>
+
+    <footer>
+        <div id=footer>
+            <p>Luka Ljubić</p>
+            <a href="https://www.algebra.hr/" target="_blank" >ALGEBRA</a>
+        </div>
+    </footer>
+
+    <script>
+        
+        var elements = [document.getElementById("inputjedan"), document.getElementById("inputdva"), document.getElementById("inputtri"), document.getElementById("inputcetiri")];
+        var subnetInput = document.getElementById("inputslash");
+        
+        //Algoritam za errore (IP)
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].onkeypress = function(evt) {
+                evt = evt || window.event;
+                var charCode = evt.which || evt.keyCode;
+                return (charCode == 48 || charCode == 49 || charCode == 50 || charCode == 51||charCode == 52||charCode == 53||charCode == 54||charCode == 55||charCode == 56||charCode == 57) && evt.target.value.length < 3;
+            };
+        }
+        //Algoritam za errore (MASK)
+        subnetInput.onkeypress = function(evt){
+            evt = evt || window.event;
+            var charCode2 = evt.which || evt.keyCode;
+            return ( charCode2 == 48 || charCode2 == 49 || charCode2 == 50 || charCode2 == 51||charCode2 == 52||charCode2 == 53||charCode2 == 54||charCode2 == 55||charCode2 == 56||charCode2 == 57) && evt.target.value.length < 2;
+        }
+
+        document.getElementById("btnSubmit2").addEventListener("click", function(){
+            convert2();
+        });
+
+        //Glavna funkcija za obradu; 
+       function convert2(){
+           
+        if(elements[0].value>255 || elements[1].value>255 || elements[2].value>255 || elements[3].value>255){
+            alert("ERROR: Neispravno upisana ip adresa");
+            return;
+        }
+
+        if(subnetInput.value == null){
+            alert("ERROR: Upisite subnet masku!");
+            return;
+        }
+        else if(subnetInput.value<1 || subnetInput.value>32){
+            alert("ERROR: Greska u upisu");
+            return;
+        }
+
+        var prefix = subnetInput.value;
+        var input1 = document.getElementById("inputjedan").value;
+        var input2 = document.getElementById("inputdva").value;
+        var input3 = document.getElementById("inputtri").value;
+        var input4 = document.getElementById("inputcetiri").value;
+        var prviOktetBin = [];
+        var drugiOktetBin = [];
+        var treciOktetBin = [];
+        var cetvrtiOktetBin = [];
+        var sviOkteti = [prviOktetBin,drugiOktetBin,treciOktetBin,cetvrtiOktetBin];
+
+
+        // ALGORITAM ZA PRETVARANJE IP U BINARNI.
+        var start = 128;
+        for (var i = 0; i < 8; i++) {
+		        if ((input1 - start) >= 0) {
+		        	prviOktetBin[i] = 1;
+			        input1 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	prviOktetBin[i] = 0;
+		        	start /= 2;
+		}
+    }
+
+            start = 128;
+    
+            for (var i = 0; i < 8; i++) {
+		        if ((input2 - start) >= 0) {
+		        	drugiOktetBin[i] = 1;
+			        input2 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	drugiOktetBin[i] = 0;
+		        	start /= 2;
+		}
+    }
+
+            start = 128;
+    
+            for (var i = 0; i < 8; i++) {
+		        if ((input3 - start) >= 0) {
+		        	treciOktetBin[i] = 1;
+			        input3 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	treciOktetBin[i] = 0;
+		        	start /= 2;
+		}
+    }
+
+            start = 128;
+    
+             for (var i = 0; i < 8; i++) {
+		        if ((input4 - start) >= 0) {
+		        	cetvrtiOktetBin[i] = 1;
+			        input4 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	cetvrtiOktetBin[i] = 0;
+		        	start /= 2;
+		        }
+	         }
+
+             //ALGORITAM ZA STAVLJANJE JEDINICA U BINARNI ZAPIS IZ PREFIXA.
+            var prviOktet=[];
+            var drugiOktet=[];
+            var treciOktet=[];
+            var cetvrtiOktet=[];
+            var sviOktetiPrefix=[prviOktet,drugiOktet,treciOktet,cetvrtiOktet];
+            var arrayMaxValue = 8;
+            var index1 = 0;
+            var index2 = 0;
+            var index3 = 0;
+            var index4 = 0;
+
+            for(var i = 0; i < prefix; i++){
+                if(prviOktet.length < arrayMaxValue){
+                    prviOktet[index1] = 1;
+                    index1++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(drugiOktet.length < arrayMaxValue){
+                    drugiOktet[index2] = 1;
+                    index2++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(treciOktet.length < arrayMaxValue){
+                    treciOktet[index3] = 1;
+                    index3++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(cetvrtiOktet.length < arrayMaxValue){
+                    cetvrtiOktet[index4] = 1;
+                    index4++;
+                    continue;
+                }
+
+            }
+            // Ostatak se popunjava nulama.
+            for(var i = 0;i<8;i++){
+                if(prviOktet[i] == 1){
+                    continue;
+                }
+                else {
+                    prviOktet[i] = 0;
+                }
+                
+            }
+
+            for(var i = 0;i<8;i++){
+                if(drugiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    drugiOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(treciOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    treciOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(cetvrtiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    cetvrtiOktet[i] = 0;
+                }
+            }
+
+            //Racunanje mreze u binarnom obliku
+
+            var adresaMrezeBin1 = [];
+            var adresaMrezeBin2 = [];
+            var adresaMrezeBin3 = [];
+            var adresaMrezeBin4 = [];
+            var ukupnaAdresaMrezeBin=[adresaMrezeBin1,adresaMrezeBin2,adresaMrezeBin3,adresaMrezeBin4];
+
+            for(var i = 0;i<4;i++){
+                for(var j = 0;j<8;j++){
+                    if(sviOkteti[i][j]+sviOktetiPrefix[i][j]==2){
+                        ukupnaAdresaMrezeBin[i][j] = 1;
+                    }
+                    else{
+                        ukupnaAdresaMrezeBin[i][j] = 0;
+                    }
+                }
+            }
+
+            //MREZA IZ BINARNOG U IP;
+            var mrezaUip=[0,0,0,0];
+            for(var i = 0;i<ukupnaAdresaMrezeBin.length;i++){
+                var potencija = 128;
+                for(var j = 0;j<ukupnaAdresaMrezeBin[i].length;j++){
+                    if(ukupnaAdresaMrezeBin[i][j]==1){
+                        mrezaUip[i] += potencija;
+                        potencija/=2;
+                    }
+                    else{
+                        potencija/=2;
+                    }
+                }
+            }
+            //Prva korisna (Mreza +1)
+            var prvaKorisna =[mrezaUip[0],mrezaUip[1],mrezaUip[2],mrezaUip[3]+1]
+
+            //Izracun brodcasta. Obrnuto od broja prefixa
+            var brodcastOktet1 =[];
+            var brodcastOktet2 =[];
+            var brodcastOktet3 =[];
+            var brodcastOktet4 =[];
+            var brodcast =[brodcastOktet1,brodcastOktet2,brodcastOktet3,brodcastOktet4];
+
+            for(var i = 0;i<4;i++){
+                for(var j = 0;j<8;j++){
+                    if(sviOktetiPrefix[i][j] == 1){
+                        brodcast[i][j] = 0;
+                    }
+                    else{
+                        brodcast[i][j] = 1;
+                    }
+                }
+
+            }
+
+            //Brodcast iz binarnog u ip
+            var brodcastUip =[0,0,0,0];
+
+            for(var i = 0;i<brodcast.length;i++){
+                var potencija = 128;
+                for(var j = 0;j<brodcast[i].length;j++){
+                    if(brodcast[i][j]==1){
+                        brodcastUip[i] += potencija;
+                        potencija/=2;
+                    }
+                    else{
+                        potencija/=2;
+                    }
+                }
+            }
+            //ZBRAJANJE BRODCASTA I MREZE ZA DOBIT BRODCAST ADRESU.
+            var glavniBrodcast = [];
+            for(var i = 0;i<4;i++){
+               glavniBrodcast[i]= mrezaUip[i] + brodcastUip[i];
+            }
+            var zadnjaKorisna = [glavniBrodcast[0], glavniBrodcast[1],glavniBrodcast[2],glavniBrodcast[3]-1];
+
+            //ISPIS NA EKRAN
+
+            document.getElementById("gmreza").style.display="block";
+            document.getElementById("gmreza").innerHTML ="MREZA: " +  mrezaUip[0] + "." + mrezaUip[1] + "." + mrezaUip[2] + "." + mrezaUip[3];
+            document.getElementById("gprvakorisna").style.display="block";
+            document.getElementById("gprvakorisna").innerHTML ="PRVA KORISNA: " +  prvaKorisna[0] + "." + prvaKorisna[1] + "." + prvaKorisna[2] + "." + prvaKorisna[3];
+            document.getElementById("gbrodcast").style.display="block";
+            document.getElementById("gbrodcast").innerHTML ="BROADCAST: " +  glavniBrodcast[0] + "." + glavniBrodcast[1] + "." + glavniBrodcast[2] + "." + glavniBrodcast[3];
+            document.getElementById("gzadnjakorisna").style.display="block";
+            document.getElementById("gzadnjakorisna").innerHTML ="ZADNJA KORISNA: " +  zadnjaKorisna[0] + "." + zadnjaKorisna[1] + "." + zadnjaKorisna[2] + "." + zadnjaKorisna[3];
+            
+       }
+
+
+       
+
+
+
+        document.getElementById("btnSubmit").addEventListener("click", function(){
+            convert();
+        });
+
+
+        function convert() {            
+            // potencije broja 2 od 0 do 32, broj uređaja je value od unosa. 
+            var potencije = [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,40,31,32 ];
+            var brojUređaja = document.getElementById("inputpet").value;
+            var potencija;
+            // određujemo koja nam je potencija potrebna i stavljamo je u varijabli potencija
+            
+            for(var i = 0;i<potencije.length;i++){
+                if(Math.pow(2,potencije[i])<brojUređaja){
+                    continue;
+                }
+                else{
+                potencija = potencije[i];
+                break;
+                }
+            }
+            var prefix = 32 - potencija;
+
+            // Odabir klase
+
+            if(document.getElementById("klase").value == "A"){
+                if(brojUređaja>Math.pow(2,24)){
+                    alert("Unijeli ste prevelik broj uređaja");
+                    return;
+                }
+                aKlasa(prefix,brojUređaja);
+            }
+            if(document.getElementById("klase").value == "B"){
+                if(brojUređaja>Math.pow(2,20)){
+                    alert("Unijeli ste prevelik broj uređaja za B klasu");
+                    return;
+                }
+                bKlasa(prefix,brojUređaja);
+            }
+            if(document.getElementById("klase").value == "C"){
+                if(brojUređaja>Math.pow(2,16)){
+                    alert("Unijeli ste prevelik broj uređaja za C klasu");
+                    return;
+                }
+                cKlasa(prefix,brojUređaja);
+            }
+        }
+
+        function aKlasa(tempPrefix){
+
+            var mreza = [10,0,0,0];
+            var prvaKorisna = [10,0,0,1];
+            var prviOktet=[];
+            var drugiOktet=[];
+            var treciOktet=[];
+            var cetvrtiOktet=[];
+            var prefix = tempPrefix;
+            // Algoritam za dobit subnet.
+            var arrayMaxValue = 8;
+            var index1 = 0;
+            var index2 = 0;
+            var index3 = 0;
+            var index4 = 0;
+            // Stavljanje jedinica po prefiksu. ako je prefiks 12, algoritam ce stavit 12 jedinica sa ljeva na desno
+            for(var i = 0; i < prefix; i++){
+                if(prviOktet.length < arrayMaxValue){
+                    prviOktet[index1] = 1;
+                    index1++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(drugiOktet.length < arrayMaxValue){
+                    drugiOktet[index2] = 1;
+                    index2++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(treciOktet.length < arrayMaxValue){
+                    treciOktet[index3] = 1;
+                    index3++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(cetvrtiOktet.length < arrayMaxValue){
+                    cetvrtiOktet[index4] = 1;
+                    index4++;
+                    continue;
+                }
+
+            }
+            // Ostatak se popunjava nulama.
+            for(var i = 0;i<8;i++){
+                if(prviOktet[i] == 1){
+                    continue;
+                }
+                else {
+                    prviOktet[i] = 0;
+                }
+                
+            }
+
+            for(var i = 0;i<8;i++){
+                if(drugiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    drugiOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(treciOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    treciOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(cetvrtiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    cetvrtiOktet[i] = 0;
+                }
+            }
+            //iz binarnog u ip
+            var glavniSubnet = [0,0,0,0];
+            var sviOkteti = [prviOktet,drugiOktet,treciOktet,cetvrtiOktet]
+
+            for(var i = 0;i<sviOkteti.length;i++){
+                var potencija = 128;
+                for(var j = 0;j<sviOkteti[i].length;j++){
+                    if(sviOkteti[i][j]==1){
+                        glavniSubnet[i] += potencija;
+                        potencija/=2;
+                    }
+                }
+            }
+            //brodcast adresa
+            var deafultSubnet =[255,255,255,255];
+            var brodcast =[0,0,0,0];
+
+            for(var i = 0;i<brodcast.length;i++){
+                brodcast[i] = deafultSubnet[i]-glavniSubnet[i]+mreza[i];
+            }
+
+
+
+            //zadnja korisna
+
+            var zadnjaKorisna = [brodcast[0],brodcast[1],brodcast[2],brodcast[3]-1];
+            
+            
+            document.getElementById("vasOdgovor").innerHTML = "ODGOVOR:";
+            document.getElementById("mreza").innerHTML = "MREZA: " +  mreza[0] + "." + mreza[1] + "." + mreza[2] + "." + mreza[3];
+            document.getElementById("prva").style.display="block";
+            document.getElementById("prva").innerHTML ="PRVA KORISNA: " +  prvaKorisna[0] + "." + prvaKorisna[1] + "." + prvaKorisna[2] + "." + prvaKorisna[3];
+            document.getElementById("brod").style.display="block";
+            document.getElementById("brod").innerHTML = "BROADCAST: " + brodcast[0] + "." + brodcast[1] + "." + brodcast[2] + "." + brodcast[3];
+            document.getElementById("zad").style.display="inline-block";
+            document.getElementById("zad").innerHTML = "ZADNJA KORISNA: " +  zadnjaKorisna[0] + "." + zadnjaKorisna[1] + "." + zadnjaKorisna[2] + "." + zadnjaKorisna[3];
+        }
+        function bKlasa(tempPrefix){
+
+            var mreza = [172,16,0,0];
+            var prvaKorisna = [172,16,0,1];
+            var prviOktet=[];
+            var drugiOktet=[];
+            var treciOktet=[];
+            var cetvrtiOktet=[];
+            var prefix = tempPrefix;
+            // Algoritam za dobit subnet.
+            var arrayMaxValue = 8;
+            var index1 = 0;
+            var index2 = 0;
+            var index3 = 0;
+            var index4 = 0;
+            // Stavljanje jedinica po prefiksu. ako je prefiks 12, algoritam ce stavit 12 jedinica sa ljeva na desno
+            for(var i = 0; i < prefix; i++){
+                if(prviOktet.length < arrayMaxValue){
+                    prviOktet[index1] = 1;
+                    index1++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(drugiOktet.length < arrayMaxValue){
+                    drugiOktet[index2] = 1;
+                    index2++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(treciOktet.length < arrayMaxValue){
+                    treciOktet[index3] = 1;
+                    index3++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(cetvrtiOktet.length < arrayMaxValue){
+                    cetvrtiOktet[index4] = 1;
+                    index4++;
+                    continue;
+                }
+
+            }
+            // Ostatak se popunjava nulama.
+            for(var i = 0;i<8;i++){
+                if(prviOktet[i] == 1){
+                    continue;
+                }
+                else {
+                    prviOktet[i] = 0;
+                }
+                
+            }
+
+            for(var i = 0;i<8;i++){
+                if(drugiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    drugiOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(treciOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    treciOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(cetvrtiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    cetvrtiOktet[i] = 0;
+                }
+            }
+            //iz binarnog u ip
+            var glavniSubnet = [0,0,0,0];
+            var sviOkteti = [prviOktet,drugiOktet,treciOktet,cetvrtiOktet]
+
+            for(var i = 0;i<sviOkteti.length;i++){
+                var potencija = 128;
+                for(var j = 0;j<sviOkteti[i].length;j++){
+                    if(sviOkteti[i][j]==1){
+                        glavniSubnet[i] += potencija;
+                        potencija/=2;
+                    }
+                }
+            }
+            //brodcast adresa
+            var deafultSubnet =[255,255,255,255];
+            var brodcast =[0,0,0,0];
+
+            for(var i = 0;i<brodcast.length;i++){
+                brodcast[i] = deafultSubnet[i]-glavniSubnet[i]+mreza[i];
+            }
+
+
+
+            //zadnja korisna
+
+            var zadnjaKorisna = [brodcast[0],brodcast[1],brodcast[2],brodcast[3]-1];
+            
+            
+            document.getElementById("vasOdgovor").innerHTML = "ODGOVOR:";
+            document.getElementById("mreza").innerHTML = "MREZA: " +  mreza[0] + "." + mreza[1] + "." + mreza[2] + "." + mreza[3];
+            document.getElementById("prva").style.display="block";
+            document.getElementById("prva").innerHTML ="PRVA KORISNA: " +  prvaKorisna[0] + "." + prvaKorisna[1] + "." + prvaKorisna[2] + "." + prvaKorisna[3];
+            document.getElementById("brod").style.display="block";
+            document.getElementById("brod").innerHTML = "BROADCAST: " + brodcast[0] + "." + brodcast[1] + "." + brodcast[2] + "." + brodcast[3];
+            document.getElementById("zad").style.display="inline-block";
+            document.getElementById("zad").innerHTML = "ZADNJA KORISNA: " +  zadnjaKorisna[0] + "." + zadnjaKorisna[1] + "." + zadnjaKorisna[2] + "." + zadnjaKorisna[3];
+        }
+        function cKlasa(tempPrefix){
+
+            var mreza = [192,168,0,0];
+            var prvaKorisna = [192,168,0,1];
+            var prviOktet=[];
+            var drugiOktet=[];
+            var treciOktet=[];
+            var cetvrtiOktet=[];
+            var prefix = tempPrefix;
+            // Algoritam za dobit subnet.
+            var arrayMaxValue = 8;
+            var index1 = 0;
+            var index2 = 0;
+            var index3 = 0;
+            var index4 = 0;
+            // Stavljanje jedinica po prefiksu. ako je prefiks 12, algoritam ce stavit 12 jedinica sa ljeva na desno
+            for(var i = 0; i < prefix; i++){
+                if(prviOktet.length < arrayMaxValue){
+                    prviOktet[index1] = 1;
+                    index1++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(drugiOktet.length < arrayMaxValue){
+                    drugiOktet[index2] = 1;
+                    index2++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(treciOktet.length < arrayMaxValue){
+                    treciOktet[index3] = 1;
+                    index3++;
+                    continue;
+                }
+                arrayMaxValue = 8;
+                if(cetvrtiOktet.length < arrayMaxValue){
+                    cetvrtiOktet[index4] = 1;
+                    index4++;
+                    continue;
+                }
+
+            }
+            // Ostatak se popunjava nulama.
+            for(var i = 0;i<8;i++){
+                if(prviOktet[i] == 1){
+                    continue;
+                }
+                else {
+                    prviOktet[i] = 0;
+                }
+                
+            }
+
+            for(var i = 0;i<8;i++){
+                if(drugiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    drugiOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(treciOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    treciOktet[i] = 0;
+                }
+            }
+
+            for(var i = 0;i<8;i++){
+                if(cetvrtiOktet[i] == 1){
+                    continue;
+                }
+                else{
+                    cetvrtiOktet[i] = 0;
+                }
+            }
+            //iz binarnog u ip
+            var glavniSubnet = [0,0,0,0];
+            var sviOkteti = [prviOktet,drugiOktet,treciOktet,cetvrtiOktet]
+
+            for(var i = 0;i<sviOkteti.length;i++){
+                var potencija = 128;
+                for(var j = 0;j<sviOkteti[i].length;j++){
+                    if(sviOkteti[i][j]==1){
+                        glavniSubnet[i] += potencija;
+                        potencija/=2;
+                    }
+                }
+            }
+            //brodcast adresa
+            var deafultSubnet =[255,255,255,255];
+            var brodcast =[0,0,0,0];
+
+            for(var i = 0;i<brodcast.length;i++){
+                brodcast[i] = deafultSubnet[i]-glavniSubnet[i]+mreza[i];
+            }
+
+
+
+            //zadnja korisna
+
+            var zadnjaKorisna = [brodcast[0],brodcast[1],brodcast[2],brodcast[3]-1];
+            
+            
+            document.getElementById("vasOdgovor").innerHTML = "ODGOVOR:";
+            document.getElementById("mreza").innerHTML = "MREZA: " +  mreza[0] + "." + mreza[1] + "." + mreza[2] + "." + mreza[3];
+            document.getElementById("prva").style.display="block";
+            document.getElementById("prva").innerHTML ="PRVA KORISNA: " +  prvaKorisna[0] + "." + prvaKorisna[1] + "." + prvaKorisna[2] + "." + prvaKorisna[3];
+            document.getElementById("brod").style.display="block";
+            document.getElementById("brod").innerHTML = "BROADCAST: " + brodcast[0] + "." + brodcast[1] + "." + brodcast[2] + "." + brodcast[3];
+            document.getElementById("zad").style.display="inline-block";
+            document.getElementById("zad").innerHTML = "ZADNJA KORISNA: " +  zadnjaKorisna[0] + "." + zadnjaKorisna[1] + "." + zadnjaKorisna[2] + "." + zadnjaKorisna[3];
+        }
+
+    </script>
+  <!-- <script src="scripts.js"></script> -->
+</body>
+</html>

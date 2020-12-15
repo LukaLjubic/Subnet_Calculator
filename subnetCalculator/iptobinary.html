@@ -1,0 +1,175 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Algebra ip converter</title>
+  <meta name="description" content="#">
+  <meta name="Luka" content="ipcon">
+
+  <link rel="icon" href="favicon.png" type="image/x-icon"/>
+  <link rel="stylesheet" href="style2.css"> 
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header>
+        <div class=naslov>
+            <a href = "mainindex.html"><img src="algebra1.png"></a>
+            <h1 style="font-weight: bold;">IP u BINARNI</h1>
+        </div>
+    </header>
+    <div id=main>
+        <div id=glavni>
+                <div id=poruka>
+                    <h2 class=welcome></h2><h3 class=to>Upisite ip adresu</h3>
+                        <div id=forma>
+                            <form>
+                                <input class="inputjedan" class ="sveskupa" type="text" placeholder="Upiši" name="Prvi upis" id="inputjedan">
+                                <h1 class="tocka">.</h1>
+                                <br>
+                                <input class="inputdva" class ="sveskupa" type="text" placeholder="Upiši" name="Drugi upis" id="inputdva">
+                                <h1 class="tocka">.</h1>
+                                <br>
+                                <input class="inputtri" class ="sveskupa" type="text" placeholder="Upiši" name="Treci upis" id="inputtri">
+                                <h1 class="tocka">.</h1>
+                                <br>
+                                <input class="inputcetiri" class ="sveskupa" type="text" placeholder="Upiši" name="Cetvrti upis" id="inputcetiri">
+                                <br><br>
+                                <input type="submit" id="btnSubmit" onclick="return false">
+                                </form>
+                        </div>
+                    <h1 id="test2" class=howto></h1>
+                    <h3 id="test" class = well></h3>
+                    <button  style="display: none;" type = "button" id="test3" onclick="window.location.href='mainindex.html'">Back to main menu</button>
+                </div>    
+        </div>
+    </div>
+
+    <footer>
+        <div id=footer>
+            <p>Luka Ljubić</p>
+            <a href="https://www.algebra.hr/" target="_blank" >ALGEBRA</a>
+        </div>
+    </footer>
+
+    <script>
+        
+        var elements = [document.getElementById("inputjedan"), document.getElementById("inputdva"), document.getElementById("inputtri"), document.getElementById("inputcetiri")];
+
+        
+ 
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].onkeypress = function(evt) {
+                evt = evt || window.event;
+                var charCode = evt.which || evt.keyCode;
+                return (charCode == 48 || charCode == 49 || charCode == 50 || charCode == 51||charCode == 52||charCode == 53||charCode == 54||charCode == 55||charCode == 56||charCode == 57) && evt.target.value.length < 3;
+            };
+        }
+        
+        document.getElementById("btnSubmit").addEventListener("click", function(){
+            convert();
+        });
+        
+
+        function convert() {  
+            
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].value > 255) {
+                    elements[i].focus();
+                    alert("GRESKA, Krivi upis");
+                    return;
+                }
+            
+            }
+
+            var input1 = document.getElementById("inputjedan").value;
+            var input2 = document.getElementById("inputdva").value;
+            var input3 = document.getElementById("inputtri").value;
+            var input4 = document.getElementById("inputcetiri").value;
+
+            var start = 128;
+
+            var prvi = [8];
+	        var drugi = [8];
+	        var treci = [8];
+            var cetvr = [8];
+
+            for (var i = 0; i < 8; i++) {
+		        if ((input1 - start) >= 0) {
+		        	prvi[i] = 1;
+			        input1 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	prvi[i] = 0;
+		        	start /= 2;
+		}
+    }
+
+    start = 128;
+    
+            for (var i = 0; i < 8; i++) {
+		        if ((input2 - start) >= 0) {
+		        	drugi[i] = 1;
+			        input2 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	drugi[i] = 0;
+		        	start /= 2;
+		}
+    }
+
+    start = 128;
+    
+            for (var i = 0; i < 8; i++) {
+		        if ((input3 - start) >= 0) {
+		        	treci[i] = 1;
+			        input3 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	treci[i] = 0;
+		        	start /= 2;
+		}
+    }
+
+    start = 128;
+    
+             for (var i = 0; i < 8; i++) {
+		        if ((input4 - start) >= 0) {
+		        	cetvr[i] = 1;
+			        input4 -= start;
+			        start /= 2;
+		        }
+		        else {
+		        	cetvr[i] = 0;
+		        	start /= 2;
+		}
+	}
+            
+
+
+
+            var ipaddress = prvi.join("") + "." +  drugi.join("") + "." +  treci.join("") + "." +  cetvr.join("");
+            document.getElementById("test2").innerHTML = "BINARNI OBLIK:";
+            document.getElementById("test").innerHTML = ipaddress;
+            document.getElementById("test3").style.display="inline-block";
+
+    
+        
+        }
+
+        
+
+        
+
+    </script>
+  <!-- <script src="scripts.js"></script> -->
+</body>
+</html>
